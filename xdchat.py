@@ -28,6 +28,9 @@ class XDChat:
         console.log(f"[I] [Chat] <Server(127.0.0.1)> {message}")
 
     def is_login(self, addr):
+        # try: console.log(f"[red]{self.not_read_message[addr[1]]}")
+        # except: pass
+
         return addr[1] in list(self.users.keys())
 
     def get_config(self, key):
@@ -36,7 +39,7 @@ class XDChat:
     def login(self, username, addr, password = ""):
         if password == self.config["password"]:
             self.users[addr[1]] = {"name": username, "addr": addr}
-            self.not_read_message[addr[1]] = self.messages
+            self.not_read_message[addr[1]] = self.messages.copy()
             self.send_server_message(f"{self.users[addr[1]]['name']} join this server")
         else:
             raise ValueError("Wrong Password")
