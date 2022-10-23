@@ -22,10 +22,10 @@ class XDChat:
             time.sleep(self.get_config("cache_clear")["sleep"])
 
     def sent_message_log(self, message, addr):
-        console.log(f"[I][Chat] <{self.users[addr[1]]['name']}({self.users[addr[1]]['addr'][1]})> {message}")
+        console.log(f"[I] [Chat] <{self.users[addr[1]]['name']}({self.users[addr[1]]['addr'][0]})> {message}")
 
     def server_message_log(self, message):
-        console.log(f"[I][Chat] <Server(127.0.0.1)> {message}")
+        console.log(f"[I] [Chat] <Server(127.0.0.1)> {message}")
 
     def is_login(self, addr):
         return addr[1] in list(self.users.keys())
@@ -37,7 +37,7 @@ class XDChat:
         if password == self.config["password"]:
             self.users[addr[1]] = {"name": username, "addr": addr}
             self.not_read_message[addr[1]] = self.messages
-            self.send_server_message(f"{self.users[addr[1]]} join this server")
+            self.send_server_message(f"{self.users[addr[1]]['name']} join this server")
         else:
             raise ValueError("Wrong Password")
 
@@ -76,6 +76,6 @@ class XDChat:
         return users
 
     def logout(self, addr):
-        self.send_server_message(f"{self.users[addr[1]]} leave from this server")
+        self.send_server_message(f"{self.users[addr[1]]['name']} leave from this server")
         self.not_read_message.pop(addr[1])
         self.users.pop(addr[1])

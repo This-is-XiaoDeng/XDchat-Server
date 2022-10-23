@@ -66,4 +66,5 @@ def start(config):
     console.log(f"[I] Server started on {server_addr}")
     while True:
         new_sock, addr = sock.accept()
+        console.log(f"[I] {addr[0]} connect to this server")
         threading.Thread(target=handle, args=(new_sock, addr, chat_server)).start()
