@@ -50,6 +50,7 @@ def handle(sock, addr: list, chat_server: xdchat.XDChat):
                 console.print_exception()
                 resp_data["code"] = 400
                 resp_data["msg"] = str(e)
+            console.log(f"[I] Return to {addr}:", resp_data)
             sock.send(json.dumps(resp_data).encode("utf-8"))
     except BrokenPipeError:
         console.print_exception()
