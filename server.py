@@ -5,11 +5,12 @@ import xdchat
 import rich.console
 
 console = rich.console.Console()
+_exit = False
 
 
 def handle(sock, addr: list, chat_server: xdchat.XDChat):
     try:
-        while True:
+        while not _exit:
             resp_data = {"code": 0, "msg": None, "data": {}}
             try:
                 recv_data = json.loads(sock.recv(1024))
@@ -30,6 +31,7 @@ def handle(sock, addr: list, chat_server: xdchat.XDChat):
                         resp_data["msg"] = "OK"
 
                 elif recv_data["mode"] == "login":
+                    console.log("[I]", recv_data)
                     if "password" not in list(recv_data["data"].keys()):
                         recv_data["data"]["password"] = ""
                     try:
@@ -59,6 +61,28 @@ def handle(sock, addr: list, chat_server: xdchat.XDChat):
         sock.close()
 
 
+def run_command(chat_server: xdchat.XDChat, addr):
+    global _exit
+    while True:
+        command = console.input("")
+        if command[:3] == "say":
+            chat_server.send_server_message(command[4:])
+        elif command == "exit":
+            chat_server.send_server_message("Server closed!")
+            _exit = True
+            socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect(addr)
+            break
+        elif command == "help":
+            help_doc = """Command Help:
+help        Show this help
+say <msg>   Say <msg>
+exit        Close server""".split("\n")
+            for d in help_doc:
+                console.log("[I]", d)
+        else:
+            console.log("[yellow][W] Unkown command!")
+
+
 def start(config):
     server_addr = (config["host"]["IP"], config["host"]["port"])
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -66,8 +90,12 @@ def start(config):
     sock.listen(config["max_connect"])
     chat_server = xdchat.XDChat(config)
     console.log(f"[I] Server started on {server_addr}")
-    while True:
+    command_thread = threading.Thread(target=lambda: run_command(chat_server, server_addr))
+    command_thread.start()
+    while not _exit:
         new_sock, addr = sock.accept()
         console.log(f"[I] {addr} connect to this server")
         threading.Thread(target=handle,
                          args=(new_sock, addr, chat_server)).start()
+    console.log("[I] Server closed!")
+    return 0
