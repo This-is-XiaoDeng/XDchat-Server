@@ -15,11 +15,13 @@ def handle(sock, addr: list, chat_server: xdchat.XDChat):
                 recv_data = json.loads(sock.recv(1024))
                 if chat_server.is_login(addr):
                     if recv_data["mode"] == "get_message":
-                        resp_data["data"]["message"] = chat_server.get_not_read_message(addr)
+                        resp_data["data"][
+                            "message"] = chat_server.get_not_read_message(addr)
                         resp_data["code"] = 200
                         resp_data["msg"] = "OK"
                     elif recv_data["mode"] == "send":
-                        chat_server.send_message(recv_data["data"]["message"], addr)
+                        chat_server.send_message(recv_data["data"]["message"],
+                                                 addr)
                         resp_data["code"] = 200
                         resp_data["msg"] = "OK"
                     elif recv_data["mode"] == "getlist":
@@ -34,8 +36,7 @@ def handle(sock, addr: list, chat_server: xdchat.XDChat):
                         chat_server.login(
                             username=recv_data["data"]["username"],
                             addr=addr,
-                            password=recv_data["data"]["password"]
-                        )
+                            password=recv_data["data"]["password"])
                     except KeyError as e:
                         resp_data["code"] = 401
                         resp_data["msg"] = str(e)
@@ -45,7 +46,8 @@ def handle(sock, addr: list, chat_server: xdchat.XDChat):
                     else:
                         resp_data["code"] = 200
                         resp_data["msg"] = "OK"
-                        resp_data["data"]["message"] = chat_server.get_config("welcome_message")
+                        resp_data["data"]["message"] = chat_server.get_config(
+                            "welcome_message")
             except Exception as e:
                 console.print_exception()
                 resp_data["code"] = 400
@@ -66,5 +68,6 @@ def start(config):
     console.log(f"[I] Server started on {server_addr}")
     while True:
         new_sock, addr = sock.accept()
-        console.log(f"[I] {addr[0]} connect to this server")
-        threading.Thread(target=handle, args=(new_sock, addr, chat_server)).start()
+        console.log(f"[I] {addr} connect to this server")
+        threading.Thread(target=handle,
+                         args=(new_sock, addr, chat_server)).start()

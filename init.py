@@ -20,8 +20,11 @@ def init():
             "cache_clear": {
                 "start_count": 10,
                 "sleep": 10
+            },
+            "bans": {
+                "users": [],
+                "IPs": []
             }
         }
         json.dump(config, open("config.json", "w"))
     return config
-    
