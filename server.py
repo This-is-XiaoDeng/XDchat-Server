@@ -72,6 +72,9 @@ def run_command(chat_server: xdchat.XDChat, addr):
             _exit = True
             socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect(addr)
             break
+        elif command == "list":
+            online_list = chat_server.get_list()
+            console.log(f"[I] There are {online_list.__len__()}/{chat_server.get_config('max_connect')} user(s) online:", online_list)
         elif command == "help":
             help_doc = """Command Help:
 help        Show this help
