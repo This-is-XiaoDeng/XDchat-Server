@@ -4,7 +4,7 @@ import server
 import sys
 
 console = rich.console.Console()
-version = "1.1.1"
+version = "1.2.0"
 
 if __name__ == "__main__":
     console.print(f"[green]XD[yellow]Chat [/]V{version}")

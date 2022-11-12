@@ -49,6 +49,9 @@ def handle(sock, addr: list, chat_server: xdchat.XDChat):
                     except NameError as e:
                         resp_data["code"] = 404
                         resp_data["msg"] = str(e)
+                    except UserWarning as e:
+                        resp_data["code"] = 405
+                        resp_data["msg"] = str(e)
                     else:
                         resp_data["code"] = 200
                         resp_data["msg"] = "OK"
@@ -63,7 +66,7 @@ def handle(sock, addr: list, chat_server: xdchat.XDChat):
                 resp_data["code"] = 400
                 resp_data["msg"] = str(e)
             sock.send(json.dumps(resp_data).encode("utf-8"))
-    except BrokenPipeError or ConnectionAbortedError:
+    except BrokenPipeError or json.JSONDecodeError:
         console.print_exception()
         chat_server.logout(addr)
         sock.close()
@@ -95,7 +98,23 @@ def run_command(chat_server: xdchat.XDChat, addr):
 help        Show help
 say <msg>   Say <msg> in server
 exit        Close server
-list        Get a list of online users""")
+list        Get a list of online users
+kick        Kick a user
+kick-ip     Kick users by IP
+ban         Ban a user's IP
+ban-ip      Ban users' IP by IP""")
+        
+        elif command[:7] == "kick-ip":
+            chat_server.kick_by_IP(command[7:].strip())
+        
+        elif command[:4] == "kick":
+            chat_server.kick_by_username(command[4:].strip())
+
+        elif command[:6] == "ban-ip":
+            chat_server.ban_by_IP(command[6:].strip())
+
+        elif command[:3] == "ban":
+            chat_server.ban_by_username(command[3:].strip())
 
         else:
             console.log("[yellow][W] Unkown command!")

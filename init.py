@@ -21,10 +21,11 @@ def init():
                 "start_count": 10,
                 "sleep": 10
             },
-            "bans": {
-                "users": [],
-                "IPs": []
-            }
+            "bans": []
         }
+        json.dump(config, open("config.json", "w"))
+    # Bans
+    if "bans" not in config.keys():
+        config["bans"] = []
         json.dump(config, open("config.json", "w"))
     return config
