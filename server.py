@@ -66,7 +66,11 @@ def handle(sock, addr: list, chat_server: xdchat.XDChat):
                 resp_data["code"] = 400
                 resp_data["msg"] = str(e)
             sock.send(json.dumps(resp_data).encode("utf-8"))
-    except BrokenPipeError or json.JSONDecodeError:
+    except BrokenPipeError:
+        console.print_exception()
+        chat_server.logout(addr)
+        sock.close()
+    except ConnectionAbortedError:
         console.print_exception()
         chat_server.logout(addr)
         sock.close()
