@@ -3,8 +3,14 @@ import json
 import threading
 import xdchat
 import rich.console
+import time
+import os
 
-console = rich.console.Console()
+try:
+    os.mkdir("logs")
+except:
+    pass
+console = rich.console.Console(file=open(f"./logs/{int(time.time())}.log", "wt"))
 _exit = False
 
 
@@ -129,7 +135,7 @@ def start(config):
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.bind(server_addr)
     sock.listen(config["max_connect"])
-    chat_server = xdchat.XDChat(config)
+    chat_server = xdchat.XDChat(config, console)
     console.log(f"[I] Server started on {server_addr}")
     command_thread = threading.Thread(
         target=lambda: run_command(chat_server, server_addr))

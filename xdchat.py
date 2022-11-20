@@ -1,14 +1,15 @@
 import threading
 import time
-import rich.console
 import json
 
-console = rich.console.Console()
+console = None
 
 
 class XDChat:
 
-    def __init__(self, config):
+    def __init__(self, config, con):
+        global console
+        console = con
         self.config = config
         self.users = {}
         self.messages = []
